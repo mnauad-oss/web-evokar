@@ -71,19 +71,45 @@
                         return;
                     }
 
+                    if (mensajes.length > 0) {
+                        // DEBUG: Mostrar las llaves del primer mensaje para ver qué nombres está usando Netlify realmente
+                        const firstKeys = Object.keys(mensajes[0].data).join(", ");
+                        logStatus(`🔍 DEBUG - Llaves encontradas en el primer mensaje: [ ${firstKeys} ]`);
+                        // Opcional: mostrar todo el objeto data crudo en consola y pantalla
+                        console.log("Primer mensaje data:", mensajes[0].data);
+                    }
+
                     mensajes.forEach(m => {
                         const item = document.createElement('div');
                         item.style.borderBottom = "1px solid #555";
                         item.style.padding = "10px";
                         item.style.marginBottom = "10px";
 
+                        // Fallback más agresivo: buscar llaves "parecidas" si las exactas fallan
+                        // (Esto es solo visual para debug, luego lo limpiaremos)
+                        const rawData = JSON.stringify(m.data);
+
+                        // Intento de mapeo insensible a mayúsculas/minúsculas
+                        const getField = (obj, keyName) => {
+                            const foundKey = Object.keys(obj).find(k => k.toLowerCase() === keyName.toLowerCase());
+                            return foundKey ? obj[foundKey] : null;
+                        };
+
+                        const nombre = getField(m.data, 'nombre') || getField(m.data, 'name') || 'No indicado';
+                        const telefono = getField(m.data, 'telefono') || getField(m.data, 'phone') || getField(m.data, 'tel') || 'No indicado';
+                        const mensaje = getField(m.data, 'mensaje') || getField(m.data, 'message') || 'Sin mensaje';
+
                         // Usamos los nombres exactos que aparecen en tu panel de Netlify
                         item.innerHTML = `
-                            <p><strong>Cliente:</strong> ${m.data.Nombre || 'No indicado'}</p>
-                            <p><strong>Teléfono:</strong> ${m.data.Teléfono || 'No indicado'}</p>
+                            <p><strong>Cliente:</strong> ${nombre}</p>
+                            <p><strong>Teléfono:</strong> ${telefono}</p>
                             <p><strong>Email:</strong> ${m.email || 'No indicado'}</p>
-                            <p><strong>Mensaje:</strong> ${m.data.Mensaje || 'Sin mensaje'}</p>
+                            <p><strong>Mensaje:</strong> ${mensaje}</p>
                             <small style="color: #888;">Recibido el: ${new Date(m.created_at).toLocaleString()}</small>
+                            <details style="margin-top:5px; color:#555; cursor:pointer;">
+                                <summary>Ver datos crudos (Debug)</summary>
+                                <pre style="font-size:0.7rem; color:#aaa;">${rawData}</pre>
+                            </details>
                         `;
                         lista.appendChild(item);
                     });
