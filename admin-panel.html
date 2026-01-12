@@ -7,23 +7,7 @@
     <title>Panel de Administración | Evokar</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script>
-        // Si no hay un usuario logueado, lo echa de vuelta al inicio
-        // Note: Using a robust check that waits for init or checks sync state
-        // Simple synchronous check often flakies if identity script loads slowly, 
-        // but for this snippet we stick to the user's requested logic style, slightly enhanced.
-        if (window.netlifyIdentity && !window.netlifyIdentity.currentUser()) {
-            // For safety on slower loads, we might rely on the body script, but here is the requested head block
-            // window.location.href = "index.html"; 
-        }
-        // Actually, the user asked for this script specifically at the "Start of the page".
-        // The previous attempt failed to match context.
-    </script>
-    <script>
-        if (!window.netlifyIdentity || !window.netlifyIdentity.currentUser()) {
-            window.location.href = "index.html";
-        }
-    </script>
+
     <style>
         body {
             padding: 50px;
@@ -44,31 +28,115 @@
     <div class="admin-container">
         <h1>Bienvenido Administrador</h1>
         <p>Has iniciado sesión correctamente.</p>
-        <p><em>(Aquí implementaremos la tabla de mensajes y configuración pronto)</em></p>
+        <div id="lista-mensajes" style="text-align: left; margin-top: 20px;">Cargando cotizaciones...</div>
+
+        <script>
+            // CONFIGURACIÓN NETLIFY API
+            const API_TOKEN = 'nfp_YFFJi7sZDFriAqvG88rqxNtCckqQyJeHe433';
+            const FORM_ID = '69656019b4404b000809065f';
+
+            function logStatus(msg) {
+                console.log(msg);
+                const lista = document.getElementById('lista-mensajes');
+                if (lista) lista.innerHTML += `<br><small style="color:gray;">${msg}</small>`;
+            }
+
+            async function cargarMensajes() {
+                const lista = document.getElementById('lista-mensajes');
+                lista.innerHTML = "Iniciando carga...";
+
+                try {
+                    logStatus("Conectando a Netlify API...");
+
+                    const response = await fetch(`https://api.netlify.com/api/v1/forms/${FORM_ID}/submissions`, {
+                        headers: {
+                            'Authorization': `Bearer ${API_TOKEN}`
+                        }
+                    });
+
+                    logStatus(`Respuesta API: ${response.status}`);
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Estado ${response.status}: ${errorText}`);
+                    }
+
+                    const mensajes = await response.json();
+                    logStatus(`Mensajes encontrados: ${mensajes.length}`);
+
+                    lista.innerHTML = ""; // Limpiar logs
+
+                    if (mensajes.length === 0) {
+                        lista.innerHTML = "<p>No hay mensajes nuevos.</p>";
+                        return;
+                    }
+
+                    mensajes.forEach(m => {
+                        const item = document.createElement('div');
+                        item.style.borderBottom = "1px solid #555";
+                        item.style.padding = "10px";
+                        item.style.marginBottom = "10px";
+
+                        // Usamos los nombres exactos que aparecen en tu panel de Netlify
+                        item.innerHTML = `
+                            <p><strong>Cliente:</strong> ${m.data.Nombre || 'No indicado'}</p>
+                            <p><strong>Teléfono:</strong> ${m.data.Teléfono || 'No indicado'}</p>
+                            <p><strong>Email:</strong> ${m.email || 'No indicado'}</p>
+                            <p><strong>Mensaje:</strong> ${m.data.Mensaje || 'Sin mensaje'}</p>
+                            <small style="color: #888;">Recibido el: ${new Date(m.created_at).toLocaleString()}</small>
+                        `;
+                        lista.appendChild(item);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar mensajes:', error);
+                    lista.innerHTML = `<p style="color: red;">Error: ${error.message}</p>
+                    <p>Posibles causas:</p>
+                    <ul>
+                        <li>ID del formulario incorrecto (${FORM_ID}).</li>
+                        <li>Token expirado o inválido.</li>
+                        <li>Problema de permisos (CORS).</li>
+                    </ul>`;
+                }
+            }
+
+            if (window.netlifyIdentity) {
+                // Estado inicial
+                const lista = document.getElementById('lista-mensajes');
+                lista.innerHTML = "Verificando autenticación...";
+
+                window.netlifyIdentity.on("init", user => {
+                    if (user) {
+                        logStatus("Usuario autenticado (init). Cargando...");
+                        cargarMensajes();
+                    } else {
+                        logStatus("No hay usuario logueado.");
+                    }
+                });
+
+                const currentUser = window.netlifyIdentity.currentUser();
+                if (currentUser) {
+                    logStatus(`Usuario detectado: ${currentUser.email}`);
+                    cargarMensajes();
+                } else {
+                    logStatus("Esperando login...");
+                }
+
+                // Handle Logout
+                window.netlifyIdentity.on("logout", () => {
+                    window.location.href = "index.html";
+                });
+            } else {
+                document.getElementById('lista-mensajes').innerHTML = "Error: Netlify Identity no cargó.";
+            }
+
+            // Button Listener
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                netlifyIdentity.logout();
+            });
+        </script>
 
         <button class="btn-primary" id="logout-btn">Cerrar Sesión</button>
     </div>
-
-    <script>
-        // Check if user is logged in
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.location.href = "index.html";
-                }
-            });
-
-            // Handle Logout
-            window.netlifyIdentity.on("logout", () => {
-                window.location.href = "index.html";
-            });
-        }
-
-        // Button Listener
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            netlifyIdentity.logout();
-        });
-    </script>
 </body>
 
 </html>
