@@ -7,6 +7,23 @@
     <title>Panel de Administración | Evokar</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        // Si no hay un usuario logueado, lo echa de vuelta al inicio
+        // Note: Using a robust check that waits for init or checks sync state
+        // Simple synchronous check often flakies if identity script loads slowly, 
+        // but for this snippet we stick to the user's requested logic style, slightly enhanced.
+        if (window.netlifyIdentity && !window.netlifyIdentity.currentUser()) {
+            // For safety on slower loads, we might rely on the body script, but here is the requested head block
+            // window.location.href = "index.html"; 
+        }
+        // Actually, the user asked for this script specifically at the "Start of the page".
+        // The previous attempt failed to match context.
+    </script>
+    <script>
+        if (!window.netlifyIdentity || !window.netlifyIdentity.currentUser()) {
+            window.location.href = "index.html";
+        }
+    </script>
     <style>
         body {
             padding: 50px;
@@ -28,8 +45,8 @@
         <h1>Bienvenido Administrador</h1>
         <p>Has iniciado sesión correctamente.</p>
         <p><em>(Aquí implementaremos la tabla de mensajes y configuración pronto)</em></p>
-        <button class="btn-primary" onclick="netlifyIdentity.logout(); window.location.href='index.html'">Cerrar
-            Sesión</button>
+        <p><em>(Aquí implementaremos la tabla de mensajes y configuración pronto)</em></p>
+        <button class="btn-primary" id="logout-btn">Cerrar Sesión</button>
     </div>
 
     <script>
@@ -40,7 +57,17 @@
                     window.location.href = "index.html";
                 }
             });
+
+            // Handle Logout
+            window.netlifyIdentity.on("logout", () => {
+                window.location.href = "index.html";
+            });
         }
+
+        // Button Listener
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            netlifyIdentity.logout();
+        });
     </script>
 </body>
 
