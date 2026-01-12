@@ -1,0 +1,66 @@
+/* Service Details */
+.service-detail {
+    padding: 6rem 10%;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.category-tabs button {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+}
+
+.category-tabs button.tab-active,
+.category-tabs button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.detail-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.detail-content.reverse {
+    flex-direction: row-reverse;
+}
+
+.text-col,
+.img-col {
+    flex: 1;
+}
+
+.text-col h3 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.text-col p {
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+
+    .detail-content,
+    .detail-content.reverse {
+        flex-direction: column;
+    }
+}

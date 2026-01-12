@@ -1,0 +1,174 @@
+/* Chatbot Widget Styles - Standalone */
+
+:root {
+    --chat-accent-color: #bfa15f;
+    /* Gold - Change this to match your Odoo theme */
+    --chat-bg-color: #1a1a1a;
+    --chat-text-color: #ececec;
+}
+
+#chatbot-toggler {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    border: none;
+    outline: none;
+    background: var(--chat-accent-color);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    z-index: 9999;
+    /* High z-index to sit on top of Odoo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chatbot-toggler:hover {
+    transform: scale(1.1);
+}
+
+.chatbot-popup {
+    position: fixed;
+    right: 35px;
+    bottom: 100px;
+    width: 350px;
+    background: var(--chat-bg-color);
+    border: 1px solid #333;
+    border-radius: 15px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    /* Uses Odoo's default font or sans-serif */
+}
+
+/* Show State */
+body.show-chatbot .chatbot-popup {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.chat-header {
+    background: var(--chat-accent-color);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-header h2 {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-close-btn {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.chatbox {
+    height: 300px;
+    overflow-y: auto;
+    padding: 15px 20px;
+    background: #121212;
+    list-style: none;
+    margin: 0;
+}
+
+.chat-input {
+    display: flex;
+    gap: 5px;
+    padding: 15px 20px;
+    border-top: 1px solid #333;
+    background: var(--chat-bg-color);
+}
+
+.chat-input textarea {
+    height: 40px;
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+#send-btn {
+    background: none;
+    border: none;
+    color: var(--chat-accent-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+/* Messages */
+.chatbox .chat {
+    display: flex;
+    list-style: none;
+    margin-bottom: 15px;
+}
+
+.chatbox .chat p {
+    white-space: pre-wrap;
+    padding: 10px 15px;
+    border-radius: 10px 10px 0 10px;
+    max-width: 80%;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.chatbox .outgoing {
+    justify-content: flex-end;
+}
+
+.chatbox .outgoing p {
+    background: var(--chat-accent-color);
+    color: #000;
+    border-radius: 10px 10px 0 10px;
+}
+
+.chatbox .incoming {
+    justify-content: flex-start;
+}
+
+.chatbox .incoming span {
+    width: 32px;
+    height: 32px;
+    background: var(--chat-accent-color);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 10px;
+    align-self: flex-end;
+    font-size: 1.2rem;
+}
+
+.chatbox .incoming p {
+    background: #333;
+    color: #ececec;
+    border-radius: 10px 10px 10px 0;
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productora Audiovisual | Arte y Registro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <link rel="stylesheet" href="css/details.css"> Removed to keep it single file if possible, or merge later -->
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="logo">
+            <a href="index.html"><img src="assets/logo.jpg" alt="Evokar Producciones"></a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html#inicio">Inicio</a></li>
+            <li>
+                <a href="#servicios">Servicios <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="servicios-foto.html">Fotografía</a></li>
+                    <li><a href="servicios-video.html">Video</a></li>
+                </ul>
+            </li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="nosotros.html">Sobre Nosotros</a></li>
+            <li><a href="index.html#contacto" class="btn-primary"
+                    style="padding: 0.5rem 1.5rem; border-color: white; color: white;">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="video-bg-container">
+            <!-- Placeholder video - Replace with user's specific asset later -->
+            <video autoplay muted loop playsinline>
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-set-of-lights-in-a-television-studio-41079-large.mp4"
+                    type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">Capturamos la Esencia</h1>
+            <p class="hero-subtitle">Producción Audiovisual & Fotografía Profesional</p>
+            <a href="#servicios" class="btn-primary">Ver Servicios</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="services-grid">
+            <!-- Service 1: Fotografía -->
+            <div class="service-card" onclick="window.location.href='#detalle-foto'">
+                <div class="service-icon"><i class="fas fa-camera"></i></div>
+                <h3>Registro Fotográfico</h3>
+                <p>Bodas, Eventos, Corporativos, Productos y Retratos.</p>
+            </div>
+
+            <!-- Service 2: Video -->
+            <div class="service-card" onclick="window.location.href='#detalle-video'">
+                <div class="service-icon"><i class="fas fa-film"></i></div>
+                <h3>Registro Audiovisual</h3>
+                <p>Producción cinematográfica para corporativos, bodas y eventos.</p>
+            </div>
+
+            <!-- Service 3: Pack -->
+            <div class="service-card" onclick="window.location.href='#detalle-completo'">
+                <div class="service-icon"><i class="fas fa-photo-video"></i></div>
+                <h3>Registro Completo</h3>
+                <p>La unión perfecta de foto y video para una cobertura total.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Odoo Booking Placeholder -->
+    <section id="agendar" style="background-color: #111;">
+        <h2 class="section-title">Agendar Cita</h2>
+        <div class="odoo-placeholder-block">
+            <span class="odoo-placeholder-label">[ ODOO APPOINTMENTS MODULE ]</span>
+            <p>Aquí arrastrarás el bloque de "Citas" de Odoo.</p>
+            <p>El cliente seleccionará fecha y hora y el sistema bloqueará automáticamente.</p>
+        </div>
+    </section>
+
+    <!-- Service Details: Photography -->
+    <section id="detalle-foto" class="service-detail">
+        <h2 class="section-title">Registro Fotográfico</h2>
+        <div class="category-tabs">
+            <button class="tab-active">Bodas</button>
+            <button>Eventos</button>
+            <button>Corporativo</button>
+            <button>Productos</button>
+            <button>Retrato</button>
+        </div>
+        <div class="detail-content">
+            <div class="text-col">
+                <h3>Capturando Momentos Irrepetibles</h3>
+                <p>Nuestro equipo de fotógrafos expertos se especializa en capturar la emoción cruda y la belleza
+                    estética de cada momento. Para bodas, ofrecemos una cobertura documental y artística.</p>
+                <a href="#agendar" class="btn-primary">Cotizar / Agendar</a>
+            </div>
+            <div class="img-col">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Boda Detalle" style="width:100%; border-radius:4px;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Details: Video -->
+    <section id="detalle-video" class="service-detail" style="background-color: #121212;">
+        <h2 class="section-title">Registro Audiovisual</h2>
+        <div class="category-tabs">
+            <button>Corporativo</button>
+            <button class="tab-active">Bodas</button>
+            <button>Eventos</button>
+        </div>
+        <div class="detail-content reverse">
+            <div class="img-col">
+                <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Video Set" style="width:100%; border-radius:4px;">
+            </div>
+            <div class="text-col">
+                <h3>Cinematografía para tu Historia</h3>
+                <p>Desde clips dinámicos para redes sociales hasta documentales completos de boda. Usamos equipos 4K y
+                    drones para perspectivas únicas.</p>
+                <a href="#agendar" class="btn-primary">Cotizar / Agendar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artistic Portfolio Section -->
+    <section id="portfolio">
+        <h2 class="section-title">Nuestro Trabajo</h2>
+        <div class="masonry-grid">
+            <div class="masonry-item item-tall">
+                <img src="https://images.unsplash.com/photo-1511285560982-1356c11d4606?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Boda Artística">
+                <div class="overlay">
+                    <h3>Bodas Eternas</h3>
+                </div>
+            </div>
+            <div class="masonry-item">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Evento Corporativo">
+                <div class="overlay">
+                    <h3>Eventos</h3>
+                </div>
+            </div>
+            <div class="masonry-item item-wide">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Producción Musical">
+                <div class="overlay">
+                    <h3>Producción Studio</h3>
+                </div>
+            </div>
+            <div class="masonry-item">
+                <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Retrato">
+                <div class="overlay">
+                    <h3>Retrato</h3>
+                </div>
+            </div>
+            <div class="masonry-item item-tall">
+                <img src="https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Cine">
+                <div class="overlay">
+                    <h3>Cinematografía</h3>
+                </div>
+            </div>
+            <div class="masonry-item">
+                <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Drone">
+                <div class="overlay">
+                    <h3>Aéreas</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Odoo Contact Placeholder -->
+    <section id="contacto">
+        <h2 class="section-title">Contáctanos</h2>
+        <div class="odoo-placeholder-block">
+            <span class="odoo-placeholder-label">[ ODOO CONTACT FORM ]</span>
+            <p>Aquí arrastrarás el bloque de "Formulario de Contacto".</p>
+            <p>Campos: Nombre, Teléfono, Correo, Mensaje.</p>
+        </div>
+    </section>
+
+    <!-- Chatbot Widget Container -->
+
+
+    <!-- Footer with Admin Access -->
+    <footer style="background:#000; padding: 2rem; text-align:center; color:#555; margin-top: 4rem;">
+        <p>&copy; 2025 Evokar Producciones. Todos los derechos reservados.</p>
+        <button id="admin-login-btn"
+            style="background:none; border:none; color:#333; cursor:pointer; font-size:0.8rem; margin-top:1rem;">[
+            Acceso Admin ]</button>
+    </footer>
+
+    <!-- Admin Inbox Modal -->
+    <div id="admin-modal" class="chatbot-popup"
+        style="width: 900px; max-width: 95vw; height: 600px; bottom: 50%; right: 50%; transform: translate(50%, 50%) scale(0.9); opacity:0; pointer-events:none; z-index: 10000;">
+        <div class="chat-header">
+            <h2>Bandeja de Entrada (Admin)</h2>
+            <button id="admin-close-btn" class="chat-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="padding: 20px; overflow-y: auto; height: calc(100% - 60px); color: #ccc;">
+            <table style="width:100%; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #444; color: var(--accent-color);">
+                        <th style="text-align:left; padding:10px;">Fecha</th>
+                        <th style="text-align:left; padding:10px;">Nombre</th>
+                        <th style="text-align:left; padding:10px;">Teléfono</th>
+                        <th style="text-align:left; padding:10px;">Email</th>
+                        <th style="text-align:left; padding:10px;">Consulta</th>
+                        <th style="padding:10px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="admin-inbox-body">
+                    <!-- Javascript will populate this -->
+                </tbody>
+            </table>
+            <div id="no-messages" style="text-align:center; margin-top:20px; color:#666;">No hay mensajes nuevos.</div>
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <button id="export-excel-btn"
+                    style="padding:5px 15px; background:var(--accent-color); color:#000; border:none; cursor:pointer; font-weight:bold;">Exportar
+                    Excel</button>
+                <button
+                    onclick="if(confirm('¿Estás seguro de borrar todos los mensajes?')) { localStorage.removeItem('admin_inbox'); location.reload(); }"
+                    style="padding:5px 10px; background:#333; color:#fff; border:none; cursor:pointer;">Borrar
+                    Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/n8n_chatbot.js"></script>
+</body>
+
+</html>

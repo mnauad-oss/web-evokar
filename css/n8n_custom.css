@@ -1,0 +1,93 @@
+:root {
+    /* Override n8n Chat Colors to match Evokar Theme (Dark/Gold/Silver) */
+    --chat--color--primary: #d0d3d4;
+    /* Silver Accent */
+    --chat--color--primary-shade-50: #b0b3b4;
+    --chat--color--primary--shade-100: #909394;
+
+    --chat--color--secondary: #444;
+    /* Dark secondary for user messages? */
+    --chat--color-secondary-shade-50: #333;
+
+    --chat--color-white: #ffffff;
+    --chat--color-light: #b0b0b0;
+    /* User preference: 'Un poco mas oscuro' (Medium Lead/Grey) */
+    --chat--color-light-shade-50: #999999;
+    --chat--color-light-shade-100: #808080;
+
+    --chat--color-medium: #666;
+    --chat--color-dark: #000000;
+    /* Header background */
+    --chat--color-disabled: #555;
+    --chat--color-typing: #888;
+
+    --chat--header--background: #000000;
+    --chat--header--color: #d0d3d4;
+
+    --chat--message--bot--background: #1a1a1a;
+    --chat--message--bot--color: #f0f0f0;
+
+    --chat--message--user--background: #d0d3d4;
+    --chat--message--user--color: #000000;
+
+    --chat--toggle--background: #1a1a1a;
+    /* Darker button background */
+    --chat--toggle--color: #d0d3d4;
+    /* Silver icon color */
+    --chat--toggle--hover--background: #333333;
+
+    --chat--spacing: 1rem;
+    --chat--border-radius: 10px;
+
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* MODERN ICON CUSTOMIZATION */
+/* Style the button container */
+.chat-window-toggle {
+    border: 1px solid #444 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.chat-window-toggle:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Target the default Chat Bubble Icon (starts with M12 3...) and HIDE it */
+.chat-window-toggle svg path[d^="M12 3"] {
+    display: none !important;
+}
+
+.chat-window-toggle:has(path[d^="M12 3"]) svg {
+    display: none !important;
+}
+
+/* Insert the "Sparkles" AI Icon using ::after */
+.chat-window-toggle:has(path[d^="M12 3"])::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: var(--chat--toggle--color);
+    /* AI / Sparkles Icon */
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 6 6.5 9.5 3 12l3.5 2.5L9 18l2.5-3.5L15 12l-3.5-2.5z'/%3E%3C/svg%3E");
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 6 6.5 9.5 3 12l3.5 2.5L9 18l2.5-3.5L15 12l-3.5-2.5z'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+}
+
+/* OPEN STATE: The icon changes to a Chevron (M7.41...). We can keep it or replace it with 'X' */
+/* Let's style the chevron to be consistent */
+.chat-window-toggle:has(path[d^="M7.41"]) svg {
+    /* We allow the svg to show, but maybe we want to scale it or color it */
+    transform: scale(1.2);
+}
