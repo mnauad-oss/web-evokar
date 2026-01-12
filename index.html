@@ -9,6 +9,7 @@
     <!-- <link rel="stylesheet" href="css/details.css"> Removed to keep it single file if possible, or merge later -->
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 
 <body>
@@ -223,9 +224,7 @@
     <!-- Footer with Admin Access -->
     <footer style="background:#000; padding: 2rem; text-align:center; color:#555; margin-top: 4rem;">
         <p>&copy; 2025 Evokar Producciones. Todos los derechos reservados.</p>
-        <button id="admin-login-btn"
-            style="background:none; border:none; color:#333; cursor:pointer; font-size:0.8rem; margin-top:1rem;">[
-            Acceso Admin ]</button>
+        <a href="#" id="login-button" style="color:#333; text-decoration:none; font-size:0.8rem;">[ Acceso Admin ]</a>
     </footer>
 
     <!-- Admin Inbox Modal -->
@@ -266,6 +265,20 @@
 
     <script src="js/app.js"></script>
     <script src="js/simple_chat.js"></script>
+    <script>
+        // Al hacer clic en el botón de Admin, se abre el panel de Login
+        document.getElementById('login-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            netlifyIdentity.open();
+        });
+
+        // Qué pasa cuando el usuario inicia sesión correctamente
+        netlifyIdentity.on('login', user => {
+            console.log('Bienvenido admin:', user);
+            // Redirigir a la página donde verás los mensajes
+            window.location.href = 'admin-panel.html';
+        });
+    </script>
 </body>
 
 </html>

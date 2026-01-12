@@ -29,22 +29,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Admin Inbox Logic
-const adminBtn = document.getElementById('admin-login-btn');
-const adminModal = document.getElementById('admin-modal');
-const adminClose = document.getElementById('admin-close-btn');
-const inboxBody = document.getElementById('admin-inbox-body');
-const noMessages = document.getElementById('no-messages');
-const exportBtn = document.getElementById('export-excel-btn');
-
-if (adminBtn) {
-    adminBtn.addEventListener('click', () => {
-        // Simple toggle for demo
-        adminModal.style.pointerEvents = "auto";
-        adminModal.style.opacity = "1";
-        adminModal.style.transform = "translate(50%, 50%) scale(1)";
-        loadMessages();
-    });
-}
+const adminBtn = document.getElementById('login-button');
+// ... logic moved to index.html for Netlify Identity ...
 
 if (adminClose) {
     adminClose.addEventListener('click', () => {

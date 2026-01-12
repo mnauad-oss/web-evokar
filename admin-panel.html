@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Evokar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+        body {
+            padding: 50px;
+            text-align: center;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h1>Bienvenido Administrador</h1>
+        <p>Has iniciado sesión correctamente.</p>
+        <p><em>(Aquí implementaremos la tabla de mensajes y configuración pronto)</em></p>
+        <button class="btn-primary" onclick="netlifyIdentity.logout(); window.location.href='index.html'">Cerrar
+            Sesión</button>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.location.href = "index.html";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
