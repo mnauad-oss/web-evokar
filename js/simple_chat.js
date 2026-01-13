@@ -45,11 +45,13 @@ const initSimpleChat = () => {
 
     injectChatbotHTML();
 
-    const toggler = document.getElementById("chatbot-toggler");
-    const closeBtn = document.querySelector(".chat-close-btn");
-    const chatbox = document.querySelector(".chatbox");
-    const chatInput = document.querySelector(".chat-input textarea");
-    const sendBtn = document.getElementById("send-btn");
+    // Selectors scoped to the chatbot container to avoid conflict with Admin Modal
+    const container = document.getElementById("gemini-chatbot-container");
+    const toggler = container.querySelector("#chatbot-toggler");
+    const closeBtn = container.querySelector(".chat-close-btn");
+    const chatbox = container.querySelector(".chatbox");
+    const chatInput = container.querySelector(".chat-input textarea");
+    const sendBtn = container.querySelector("#send-btn");
     const body = document.body;
 
     if (!toggler) return;
@@ -101,9 +103,9 @@ const initSimpleChat = () => {
             btn.onmouseout = () => { btn.style.background = "rgba(0,0,0,0.3)"; btn.style.color = "#fff"; };
 
             btn.onclick = () => {
-                const chatInput = document.querySelector(".chat-input textarea");
+                const chatInput = container.querySelector(".chat-input textarea");
                 chatInput.value = opt.text || opt.label;
-                document.getElementById("send-btn").click();
+                container.querySelector("#send-btn").click();
                 optionsDiv.querySelectorAll("button").forEach(b => {
                     b.disabled = true;
                     b.style.opacity = "0.5";
