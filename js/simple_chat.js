@@ -57,120 +57,222 @@ const initSimpleChat = () => {
     toggler.addEventListener("click", () => body.classList.toggle("show-chatbot"));
     closeBtn.addEventListener("click", () => body.classList.remove("show-chatbot"));
 
+    // --- UI HELPERS ---
     const createChatLi = (message, className) => {
         const chatLi = document.createElement("li");
         chatLi.classList.add("chat", className);
-
         let chatContent;
         if (className === "outgoing") {
             chatContent = `<p>${message}</p>`;
         } else {
-            // For incoming, check if we have a logo available or use icon
-            chatContent = `<span class="bot-icon" style="width:32px; height:32px; background:#d0d3d4; color:#000; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-right:10px; align-self:flex-end;"><i class="fas fa-robot"></i></span><p>${message}</p>`;
+            chatContent = `<span class="bot-icon" style="flex-shrink:0; width:32px; height:32px; background:#d0d3d4; color:#000; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-right:10px; align-self:flex-end;"><i class="fas fa-robot"></i></span><p>${message}</p>`;
         }
-
         chatLi.innerHTML = chatContent;
         return chatLi;
     }
 
-    // --- LOGIC ENGINE ---
-    let conversationState = "IDLE"; // IDLE, CAPTURING_DATA
-    let pendingInquiry = "";
+    const appendOptions = (options) => {
+        const li = document.createElement("li");
+        li.classList.add("chat", "incoming");
+        li.style.flexDirection = "column";
+        li.style.alignItems = "flex-start";
+        li.style.marginTop = "5px";
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "chat-options";
+        optionsDiv.style.display = "flex";
+        optionsDiv.style.flexWrap = "wrap";
+        optionsDiv.style.gap = "8px";
+        optionsDiv.style.marginLeft = "42px";
+
+        options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.textContent = opt.label;
+            btn.style.padding = "8px 14px";
+            btn.style.border = "1px solid #666";
+            btn.style.borderRadius = "20px";
+            btn.style.background = "rgba(0,0,0,0.3)";
+            btn.style.color = "#fff";
+            btn.style.cursor = "pointer";
+            btn.style.fontSize = "0.85rem";
+            btn.style.transition = "all 0.2s";
+
+            btn.onmouseover = () => { btn.style.background = "#fff"; btn.style.color = "#000"; };
+            btn.onmouseout = () => { btn.style.background = "rgba(0,0,0,0.3)"; btn.style.color = "#fff"; };
+
+            btn.onclick = () => {
+                const chatInput = document.querySelector(".chat-input textarea");
+                chatInput.value = opt.text || opt.label;
+                document.getElementById("send-btn").click();
+                optionsDiv.querySelectorAll("button").forEach(b => {
+                    b.disabled = true;
+                    b.style.opacity = "0.5";
+                    b.style.cursor = "default";
+                });
+            };
+            optionsDiv.appendChild(btn);
+        });
+
+        li.appendChild(optionsDiv);
+        chatbox.appendChild(li);
+        chatbox.scrollTo(0, chatbox.scrollHeight);
+    };
+
+    // --- LOGIC ENGINE (State Machine) ---
+    let chatState = "GREETING";
+    let intendedService = "";
+
+    const isPositive = (text) => /\b(s[íi]|claro|bueno|ok|bien|acepto|por favor|dale|yes|obvio|perfecto)\b/i.test(text);
+    const isNegative = (text) => /\b(no|negativo|cancelar|chao|adios|nada|nunca)\b/i.test(text);
+
+    const showMainMenu = () => {
+        chatState = "MENU";
+        setTimeout(() => {
+            appendOptions([
+                { label: "Cotización", text: "Quiero una cotización" },
+                { label: "Dudas", text: "Tengo dudas" },
+                { label: "Muestras de trabajo", text: "Ver muestras" },
+                { label: "Otras dudas", text: "Otras consultas" }
+            ]);
+        }, 500);
+    };
 
     const generateResponse = (userMessage) => {
         const lowerMsg = userMessage.toLowerCase();
 
-        // --- 1. STATE: CAPTURING DATA ---
-        if (conversationState === "CAPTURING_DATA") {
-            // Attempt to parse minimal data
-            // We expect "Name, Phone, Email" roughly
-            conversationState = "IDLE"; // Reset after capture attempt
+        // 1. STATE: CAPTURE DATA
+        if (chatState === "CAPTURE_DATA") {
+            chatState = "MENU";
 
-            // Enviar a Netlify (Simulando post de formulario)
+            let nombre = "Cliente Chat";
+            let email = "";
+            let telefono = "";
+            const emailMatch = userMessage.match(/[\w.-]+@[\w.-]+\.\w+/);
+            if (emailMatch) email = emailMatch[0];
+            const phoneMatch = userMessage.match(/\+?\d[\d\s-]{7,}/);
+            if (phoneMatch) telefono = phoneMatch[0];
+            const cleanMsg = userMessage;
+
             const formData = new FormData();
             formData.append('form-name', 'contact');
-            formData.append('Nombre', saveData.nombre);
-            formData.append('Teléfono', saveData.telefono);
-            formData.append('email', saveData.email);
-            formData.append('Mensaje', saveData.consulta);
-            formData.append('Origen', 'Chatbot'); // Marca de agua del bot
+            formData.append('Nombre', nombre);
+            formData.append('Teléfono', telefono);
+            formData.append('email', email);
+            formData.append('Mensaje', `[${intendedService}] Detalle: ${cleanMsg}`);
+            formData.append('Origen', 'Chatbot');
 
             fetch('/', {
                 method: 'POST',
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams(formData).toString()
-            }).then(() => {
-                chatbox.appendChild(createChatLi("¡Listo! He enviado tus datos a nuestro equipo humano. Se pondrán en contacto contigo pronto. ¿Te ayudo en algo más?", "incoming"));
-                chatbox.scrollTo(0, chatbox.scrollHeight);
-            }).catch((error) => {
-                console.error('Error enviando form:', error);
-                chatbox.appendChild(createChatLi("Hubo un pequeño problema de conexión, pero no te preocupes, inténtalo de nuevo o escríbenos directo al formulario de contacto.", "incoming"));
-                chatbox.scrollTo(0, chatbox.scrollHeight);
-            });
+            }).catch(e => console.error(e));
 
-            return "Guardando tus datos..."; // Mensaje temporal mientras se hace el fetch
+            return "¡Excelente! Hemos recibido tus datos. Alguien del equipo te contactará pronto. ¿Necesitas algo más?";
         }
 
-        // --- 2. KEYWORD RULES ---
-
-        // Precios / Bodas
-        if (lowerMsg.includes("precio") || lowerMsg.includes("valor") || lowerMsg.includes("cuanto sale") || lowerMsg.includes("costo")) {
-            if (lowerMsg.includes("boda") || lowerMsg.includes("matrimonio")) {
-                return "💍 **BODAS**:\n- Fotografía: $500.000 (8hrs, +1000 fotos).\n- Video: $350.000.\n- Pack Completo: Consultar descuentos.";
+        // 2. STATE: CONFIRM_QUOTE
+        if (chatState === "CONFIRM_QUOTE") {
+            if (isPositive(lowerMsg) || lowerMsg.includes("cotiza")) {
+                chatState = "CAPTURE_DATA";
+                return "¡Estupendo! Por favor, envíame en **un solo mensaje**:\n\n1. Tu Nombre, Teléfono y Correo\n2. Fecha del evento\n3. Horarios aproximados (Inicio - Fin)";
+            } else if (isNegative(lowerMsg)) {
+                chatState = "MENU";
+                setTimeout(showMainMenu, 1500);
+                return "Entendido. Volvamos al menú principal.";
+            } else {
+                return "Disculpa, no entendí si deseas la cotización. Responde **Sí** o **No**.";
             }
-            if (lowerMsg.includes("evento") || lowerMsg.includes("bautizo")) {
-                return "🎉 **EVENTOS**:\n- Fotografía desde $300.000.\n- Video desde $150.000.";
+        }
+
+        // 3. STATE: FALLBACK_ASK
+        if (chatState === "FALLBACK_ASK") {
+            if (isPositive(lowerMsg)) {
+                chatState = "CAPTURE_DATA";
+                intendedService = "Duda Escalada";
+                return "Perfecto. Por favor déjanos tu **Nombre, Correo y tu duda detallada** aquí abajo.";
+            } else if (isNegative(lowerMsg)) {
+                chatState = "MENU";
+                return "Está bien. ¿En qué más puedo ayudarte?";
+            } else {
+                return "No te entendí bien. ¿Quieres que le preguntemos a un administrador? (Responde Sí o No).";
             }
-            return "Nuestros precios base:\n- Bodas: Foto $500k | Video $350k\n- Eventos: Desde $300k\n- Corporativo: $1M (Pack Full)\n\n¿Qué evento tienes?";
         }
 
-        if (lowerMsg.includes("boda") || lowerMsg.includes("matrimonio")) {
-            return "Las bodas son nuestra especialidad. Ofrecemos cobertura documental y artística. ¿Te gustaría ver nuestro portafolio o saber precios?";
+        // 4. FLOW: MENU HANDLER
+        if (chatState === "MENU" || chatState === "GREETING") {
+            if (lowerMsg.includes("cotiza")) {
+                chatState = "SUBMENU_QUOTES";
+                setTimeout(() => appendOptions([
+                    { label: "Matrimonios", text: "Matrimonios" },
+                    { label: "Eventos Sociales", text: "Eventos Sociales" },
+                    { label: "Corporativos", text: "Corporativos" }
+                ]), 600);
+                return "¿Qué tipo de evento estás planeando?";
+            }
+            if (lowerMsg.includes("duda") || lowerMsg.includes("consulta")) {
+                chatState = "FALLBACK_ASK";
+                return "Entiendo. No tengo respuesta inmediata para eso, pero podemos preguntársela a los administradores. ¿Te parece?";
+            }
+            if (lowerMsg.includes("muestra") || lowerMsg.includes("trabajo")) {
+                chatState = "MENU";
+                return "¡Claro! Puedes ver nuestro trabajo en la sección 'Portfolio' del menú principal de la web.";
+            }
         }
 
-        // Corporativo
-        if (lowerMsg.includes("corporativo") || lowerMsg.includes("empresa")) {
-            return "🏢 **CORPORATIVO**:\nOfrecemos producción integral (Video + Foto + Aéreas) por $1.000.000. Ideal para marcas que buscan destacar.";
+        // 5. FLOW: SUBMENU QUOTES
+        if (chatState === "SUBMENU_QUOTES") {
+            if (lowerMsg.includes("matrimonio") || lowerMsg.includes("boda")) {
+                chatState = "SUBMENU_WEDDING";
+                setTimeout(() => appendOptions([
+                    { label: "Solo Fotos", text: "Solo Fotos" },
+                    { label: "Solo Video", text: "Solo व्हिडिओ" },
+                    { label: "Fotos y Video", text: "Fotos y Video" }
+                ]), 600);
+                return "¡Qué emoción! 💍 ¿Qué servicio necesitas para tu boda?";
+            }
+            if (lowerMsg.includes("corporativo")) {
+                intendedService = "Corporativo";
+                chatState = "CONFIRM_QUOTE";
+                return "Para empresas ofrecemos producción integral. ¿Te gustaría recibir una propuesta formal?";
+            }
+            if (lowerMsg.includes("social")) {
+                intendedService = "Evento Social";
+                chatState = "CONFIRM_QUOTE";
+                return "Cubrimos todo tipo de eventos sociales. ¿Quieres una cotización?";
+            }
         }
 
-        // Contacto Intent
-        if (lowerMsg.includes("contacto") || lowerMsg.includes("llamar") || lowerMsg.includes("correo") || lowerMsg.includes("mensaje") || lowerMsg.includes("agendar") || lowerMsg.includes("cita")) {
-            conversationState = "CAPTURING_DATA";
-            pendingInquiry = "Solicitud de contacto inmediata";
-            return "Claro. Por favor déjame tu **Nombre, Teléfono y Correo** en un solo mensaje para que te contactemos.";
+        // 6. FLOW: SUBMENU WEDDING
+        if (chatState === "SUBMENU_WEDDING") {
+            intendedService = `Matrimonio (${userMessage})`;
+            chatState = "CONFIRM_QUOTE";
+            return "Nuestros servicios incluyen: registro de preparación, ceremonia, sesión de novios, fotos sociales y fiesta. 📸🎥\n\n¿Quieres que te enviemos la cotización?";
         }
 
-        // Ubicacion
-        if (lowerMsg.includes("donde") || lowerMsg.includes("ubicacion") || lowerMsg.includes("ciudad")) {
-            return "Estamos base en **Casablanca, Valparaíso**, pero cubrimos eventos en toda la región.";
-        }
-
-        // Greetings
-        if (lowerMsg.includes("hola") || lowerMsg.includes("buenos")) {
-            return "¡Hola! 👋 Soy el asistente de Evokar. ¿Buscas foto o video para tu evento?";
-        }
-
-        // Fallback
-        pendingInquiry = userMessage; // Save context
-        return "No estoy seguro de entender eso. ¿Podrías preguntar por 'precios', 'bodas' o pedir 'contacto' para hablar con un humano?";
+        // --- GLOBAL FALLBACK ---
+        chatState = "FALLBACK_ASK";
+        return "No tengo esta información a mano, pero podemos preguntársela a los administradores. ¿Te parece?";
     };
-
 
     const handleChat = () => {
         const userMessage = chatInput.value.trim();
         if (!userMessage) return;
 
-        // User Message
         chatInput.value = "";
         chatbox.appendChild(createChatLi(userMessage, "outgoing"));
         chatbox.scrollTo(0, chatbox.scrollHeight);
 
-        // Bot Thinking Delay
         setTimeout(() => {
             const responseText = generateResponse(userMessage);
             chatbox.appendChild(createChatLi(responseText, "incoming"));
             chatbox.scrollTo(0, chatbox.scrollHeight);
         }, 600);
+    }
+
+    // STARTUP
+    const msgs = chatbox.querySelectorAll(".chat");
+    if (msgs.length === 1) {
+        showMainMenu();
     }
 
     sendBtn.addEventListener("click", handleChat);
