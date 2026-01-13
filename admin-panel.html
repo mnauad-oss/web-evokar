@@ -89,6 +89,12 @@
                         const nombre = getField(m.data, 'nombre') || getField(m.data, 'name') || 'No indicado';
                         const telefono = getField(m.data, 'telefono') || getField(m.data, 'phone') || getField(m.data, 'tel') || 'No indicado';
                         const mensaje = getField(m.data, 'mensaje') || getField(m.data, 'message') || 'Sin mensaje';
+                        const origen = getField(m.data, 'origen') || 'Web';
+
+                        // Badge de origen
+                        const origenBadge = origen.toLowerCase().includes('chatbot')
+                            ? `<span style="background: #e100ff; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px;">🤖 Chatbot</span>`
+                            : `<span style="background: #444; color: #aaa; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; margin-left: 8px;">🌐 Web</span>`;
 
                         // Lógica WhatsApp
                         let whatsappBtn = '';
@@ -107,7 +113,7 @@
 
                         item.innerHTML = `
                             <div style="margin-bottom: 10px;">
-                                <p style="margin: 5px 0;"><strong>Cliente:</strong> ${nombre}</p>
+                                <p style="margin: 5px 0;"><strong>Cliente:</strong> ${nombre} ${origenBadge}</p>
                                 <p style="margin: 5px 0;"><strong>Teléfono:</strong> ${telefono} ${whatsappBtn}</p>
                                 <p style="margin: 5px 0;"><strong>Email:</strong> ${m.email || 'No indicado'}</p>
                                 <p style="margin: 5px 0;"><strong>Mensaje:</strong> ${mensaje}</p>
