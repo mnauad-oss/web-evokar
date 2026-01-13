@@ -86,42 +86,29 @@ const initSimpleChat = () => {
             // We expect "Name, Phone, Email" roughly
             conversationState = "IDLE"; // Reset after capture attempt
 
-            // Save to LocalStorage
-            try {
-                const existingInbox = JSON.parse(localStorage.getItem('admin_inbox') || "[]");
+            // Enviar a Netlify (Simulando post de formulario)
+            const formData = new FormData();
+            formData.append('form-name', 'contact');
+            formData.append('Nombre', saveData.nombre);
+            formData.append('Teléfono', saveData.telefono);
+            formData.append('email', saveData.email);
+            formData.append('Mensaje', saveData.consulta);
+            formData.append('Origen', 'Chatbot'); // Marca de agua del bot
 
-                // Simple heuristic parsing
-                const saveData = {
-                    fecha: new Date().toLocaleString(),
-                    nombre: "Cliente Web",
-                    telefono: "",
-                    email: "",
-                    consulta: pendingInquiry || "Consulta General"
-                };
+            fetch('/', {
+                method: 'POST',
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData).toString()
+            }).then(() => {
+                chatbox.appendChild(createChatLi("¡Listo! He enviado tus datos a nuestro equipo humano. Se pondrán en contacto contigo pronto. ¿Te ayudo en algo más?", "incoming"));
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+            }).catch((error) => {
+                console.error('Error enviando form:', error);
+                chatbox.appendChild(createChatLi("Hubo un pequeño problema de conexión, pero no te preocupes, inténtalo de nuevo o escríbenos directo al formulario de contacto.", "incoming"));
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+            });
 
-                // Extract email
-                const emailMatch = userMessage.match(/\S+@\S+\.\S+/);
-                if (emailMatch) saveData.email = emailMatch[0];
-
-                // Extract potential phone
-                const phoneMatch = userMessage.match(/\d{8,}/);
-                if (phoneMatch) saveData.telefono = phoneMatch[0];
-
-                // Name is harder, just take the whole string if short, or 'Cliente'
-                const nameCandidate = userMessage.replace(saveData.email, "").replace(saveData.telefono, "").trim();
-                if (nameCandidate.length > 2 && nameCandidate.length < 50) {
-                    saveData.nombre = nameCandidate;
-                }
-
-                existingInbox.push(saveData);
-                localStorage.setItem('admin_inbox', JSON.stringify(existingInbox));
-
-                return "¡Gracias! Hemos guardado tus datos. Te contactaremos a la brevedad. ¿Necesitas saber algo más?";
-
-            } catch (e) {
-                console.error(e);
-                return "Hubo un error guardando tus datos, pero he tomado nota. ¿En qué más puedo ayudarte?";
-            }
+            return "Guardando tus datos..."; // Mensaje temporal mientras se hace el fetch
         }
 
         // --- 2. KEYWORD RULES ---
