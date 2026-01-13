@@ -142,7 +142,7 @@ const initSimpleChat = () => {
 
         // 1. STATE: CAPTURE DATA
         if (chatState === "CAPTURE_DATA") {
-            chatState = "MENU";
+            chatState = "POST_CAPTURE";
 
             let nombre = "Cliente Chat";
             let email = "";
@@ -168,6 +168,20 @@ const initSimpleChat = () => {
             }).catch(e => console.error(e));
 
             return "¡Excelente! Hemos recibido tus datos. Alguien del equipo te contactará pronto. ¿Necesitas algo más?";
+        }
+
+        // 1.5. STATE: POST_CAPTURE
+        if (chatState === "POST_CAPTURE") {
+            if (isNegative(lowerMsg)) {
+                chatState = "GREETING";
+                return "¡Gracias a ti! Estaremos atentos a cualquier consulta. ¡Que tengas un gran día! 👋";
+            } else if (isPositive(lowerMsg)) {
+                chatState = "MENU";
+                setTimeout(showMainMenu, 600);
+                return "¡Claro! Aquí tienes nuestras opciones nuevamente:";
+            } else {
+                return "No entendí muy bien. ¿Necesitas algo más? (Responde Sí o No)";
+            }
         }
 
         // 2. STATE: CONFIRM_QUOTE
@@ -225,7 +239,7 @@ const initSimpleChat = () => {
                 chatState = "SUBMENU_WEDDING";
                 setTimeout(() => appendOptions([
                     { label: "Solo Fotos", text: "Solo Fotos" },
-                    { label: "Solo Video", text: "Solo व्हिडिओ" },
+                    { label: "Solo Video", text: "Solo Video" },
                     { label: "Fotos y Video", text: "Fotos y Video" }
                 ]), 600);
                 return "¡Qué emoción! 💍 ¿Qué servicio necesitas para tu boda?";
